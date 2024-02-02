@@ -25,9 +25,6 @@ export function App() {
             author="Robson de Jesus"
             content="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Culpa voluptatum delectus sequi recusandae fugit adipisci unde enim praesentium labore quae."
           />
-
-         
-
         </main>
       </div>
 
