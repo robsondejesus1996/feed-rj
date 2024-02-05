@@ -1,45 +1,65 @@
-import { Avatar } from './Avatar';
+import { format, formatDistanceToNow } from "date-fns";
+import ptBR from "date-fns/locale/pt-BR";
 
-import { Comment } from './Comment';
-import styles from './Post.module.css';
+import { Avatar } from "./Avatar";
 
-export function Post(props){
+import { Comment } from "./Comment";
+import styles from "./Post.module.css";
 
-    console.log(props)
-    return(
-        <article className={styles.post}>
-            <header>
-                <div className={styles.author}>
-                    <Avatar src="https://github.com/robsondejesus1996.png" />
-                    <div className={styles.authorInfo}>
-                        <strong>Robson de Jesus</strong>
-                        <span>Software Engineer</span>
-                    </div>
-                </div>
-                <time title='27 de dezembro às 14:00' dateTime='2023-12-27 14:55'>Publicado há 1h</time>
-            </header>
+export function Post({ author, publishedAt, content }) {
+  const publishedDateFormatted = format(
+    publishedAt,
+    "d 'de' LLLL 'às' HH:mm'h'",
+    {
+      locale: ptBR,
+    }
+  );
 
-            <div className={styles.content}>
-                
-            </div>
+  const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
+    locale: ptBR,
+    addSuffix: true
+  });
 
-            <form className={styles.commentForm}>
-                <strong>Deixe o seu feedback</strong>
+  return (
+    <article className={styles.post}>
+      <header>
+        <div className={styles.author}>
+          <Avatar src={author.avatarUrl} />
+          <div className={styles.authorInfo}>
+            <strong>{author.name}</strong>
+            <span>{author.role}</span>
+          </div>
+        </div>
+        <time title="27 de dezembro às 14:00" dateTime={publishedAt.toISOString()}>
+          {publishedDateRelativeToNow}
+        </time>
+      </header>
 
-                <textarea
-                 placeholder="Deixe um comentário"
-                />
+      <div className={styles.content}>
+        {content.map(line =>{
+            if(line.type == 'paragraph'){
+                return <p>{line.content}</p>
+            }else if(line.type == 'link'){
+                return <p><a href="#">{line.content}</a></p>
+            }
+        })}
+      </div>
 
-                <footer>
-                    <button type="submit">Publicar</button>
-                </footer>
-            </form>
+      <form className={styles.commentForm}>
+        <strong>Deixe o seu feedback</strong>
 
-            <div className={styles.commentList}>
-                <Comment />
-                <Comment />
-                <Comment />
-            </div>
-        </article>
-    )
+        <textarea placeholder="Deixe um comentário" />
+
+        <footer>
+          <button type="submit">Publicar</button>
+        </footer>
+      </form>
+
+      <div className={styles.commentList}>
+        <Comment />
+        <Comment />
+        <Comment />
+      </div>
+    </article>
+  );
 }
