@@ -5,8 +5,15 @@ import { Avatar } from "./Avatar";
 
 import { Comment } from "./Comment";
 import styles from "./Post.module.css";
+import { useState } from "react";
 
 export function Post({ author, publishedAt, content }) {
+  const [comments, setComments] = useState([
+    1,
+    2,
+
+]);
+
   const publishedDateFormatted = format(
     publishedAt,
     "d 'de' LLLL 'às' HH:mm'h'",
@@ -17,8 +24,15 @@ export function Post({ author, publishedAt, content }) {
 
   const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
     locale: ptBR,
-    addSuffix: true
+    addSuffix: true,
   });
+
+  function handleCreateNewComment() {
+    event.preventDefault();
+
+    setComments([...comments, comments.length + 1]);
+    
+  }
 
   return (
     <article className={styles.post}>
@@ -30,22 +44,29 @@ export function Post({ author, publishedAt, content }) {
             <span>{author.role}</span>
           </div>
         </div>
-        <time title="27 de dezembro às 14:00" dateTime={publishedAt.toISOString()}>
+        <time
+          title="27 de dezembro às 14:00"
+          dateTime={publishedAt.toISOString()}
+        >
           {publishedDateRelativeToNow}
         </time>
       </header>
 
       <div className={styles.content}>
-        {content.map(line =>{
-            if(line.type == 'paragraph'){
-                return <p>{line.content}</p>
-            }else if(line.type == 'link'){
-                return <p><a href="#">{line.content}</a></p>
-            }
+        {content.map((line) => {
+          if (line.type == "paragraph") {
+            return <p>{line.content}</p>;
+          } else if (line.type == "link") {
+            return (
+              <p>
+                <a href="#">{line.content}</a>
+              </p>
+            );
+          }
         })}
       </div>
 
-      <form className={styles.commentForm}>
+      <form onSubmit={handleCreateNewComment} className={styles.commentForm}>
         <strong>Deixe o seu feedback</strong>
 
         <textarea placeholder="Deixe um comentário" />
@@ -56,9 +77,9 @@ export function Post({ author, publishedAt, content }) {
       </form>
 
       <div className={styles.commentList}>
-        <Comment />
-        <Comment />
-        <Comment />
+        {comments.map((comment) => {
+          return <Comment />;
+        })}
       </div>
     </article>
   );
